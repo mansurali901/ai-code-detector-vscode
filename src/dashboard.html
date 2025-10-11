@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: #1e1e1e;
+      color: #f5f5f5;
+      padding: 2em;
+    }
+    h1 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 1em;
+    }
+    .summary {
+      text-align: center;
+      font-size: 1.1em;
+      margin-bottom: 2em;
+    }
+    .progress-container {
+      width: 80%;
+      background-color: #333;
+      border-radius: 6px;
+      margin: 1em auto;
+      height: 25px;
+      overflow: hidden;
+      display: flex;
+    }
+    .progress-human {
+      background-color: #4caf50;
+      height: 100%;
+      transition: width 0.6s ease;
+    }
+    .progress-ai {
+      background-color: #f44336;
+      height: 100%;
+      transition: width 0.6s ease;
+    }
+    .chart-container {
+      position: relative;
+      width: 80%;
+      margin: 2em auto;
+    }
+    .controls {
+      text-align: center;
+      margin-top: 2em;
+    }
+    .btn {
+      background-color: #2196f3;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      padding: 8px 16px;
+      font-size: 0.95em;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .btn:hover {
+      background-color: #1976d2;
+    }
+  </style>
+</head>
+<body>
+  <h1>AI vs Human Code Overview</h1>
+  <div id="summary" class="summary"></div>
+
+  <div class="progress-container">
+    <div id="bar-human" class="progress-human"></div>
+    <div id="bar-ai" class="progress-ai"></div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="pieChart"></canvas>
+  </div>
+
+  <div class="controls">
+    <button id="resetBtn" class="btn">🔄 Reset Stats</button>
+  </div>
+
+  <script>
+    const vscode = acquireVsCodeApi(); // connect to extension
+    vscode.postMessage('ready');       // tell extension dashboard is ready
+
+    let chart;
+    const ctx = document.getElementById('pieChart').getContext('2d');
+
+    function render(human, ai) {
+      const total = human + ai || 1;
+      const humanPct = ((human / total) * 100).toFixed(2);
+      const aiPct = ((ai / total) * 100).toFixed(2);
+
+      document.getElementById('summary').innerHTML = `
+        👨‍💻 <b>Human:</b> ${human} lines (${humanPct}%)
+        <br>🤖 <b>AI:</b> ${ai} lines (${aiPct}%)
+        <br><br>📊 <b>Total:</b> ${total} lines
+      `;
+      document.getElementById('bar-human').style.width = humanPct + '%';
+      document.getElementById('bar-ai').style.width = aiPct + '%';
+
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Human', 'AI'],
+          datasets: [{
+            data: [human, ai],
+            backgroundColor: ['#4caf50', '#f44336'],
+            borderColor: '#1e1e1e',
+            borderWidth: 2,
+          }],
+        },
+        options: {
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#f5f5f5', font: { size: 14 } },
+            },
+          },
+        },
+      });
+    }
+
+    // Initial render from injected vars
+    const humanInit = typeof HUMAN_VALUE !== 'undefined' ? HUMAN_VALUE : 0;
+    const aiInit = typeof AI_VALUE !== 'undefined' ? AI_VALUE : 0;
+    render(humanInit, aiInit);
+
+    // 🔄 Live updates from extension.ts
+    window.addEventListener('message', event => {
+      const { human, ai } = event.data || {};
+      if (typeof human === 'number' && typeof ai === 'number') {
+        render(human, ai);
+      }
+    });
+
+    // 🔘 Reset button
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      vscode.postMessage({ command: 'reset' });
+    });
+  </script>
+</body>
+</html>

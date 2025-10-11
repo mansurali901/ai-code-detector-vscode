@@ -1,0 +1,38 @@
+{
+    "name": "vscode-ai-tracker",
+    "displayName": "AI vs Human Code Tracker",
+    "description": "Tracks how much of your code is written by humans vs AI tools like Copilot or ChatGPT.",
+    "version": "0.0.1",
+    "publisher": "your-name",
+    "engines": {
+        "vscode": "^1.85.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onStartupFinished",
+        "onCommand:aianalytics.showStats"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "aianalytics.showStats",
+                "title": "Show AI vs Human Stats"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "package": "vsce package"
+    },
+    "devDependencies": {
+        "@types/node": "^24.7.1",
+        "@types/vscode": "^1.85.0",
+        "typescript": "^5.4.0",
+        "vsce": "^2.15.0"
+    }
+}
