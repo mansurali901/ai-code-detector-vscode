@@ -8,157 +8,6 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background-color: #1e1e1e;
       color: #f5f5f5;
-      padding: 2em;
-    }
-    h1 {
-      text-align: center;
-      color: #fff;
-      margin-bottom: 1em;
-    }
-    .summary {
-      text-align: center;
-      font-size: 1.1em;
-      margin-bottom: 2em;
-    }
-    .progress-container {
-      width: 80%;
-      background-color: #333;
-      border-radius: 6px;
-      margin: 1em auto;
-      height: 25px;
-      overflow: hidden;
-      display: flex;
-    }
-    .progress-human {
-      background-color: #4caf50;
-      height: 100%;
-      transition: width 0.6s ease;
-    }
-    .progress-ai {
-      background-color: #f44336;
-      height: 100%;
-      transition: width 0.6s ease;
-    }
-    .chart-container {
-      position: relative;
-      width: 80%;
-      margin: 2em auto;
-    }
-    .controls {
-      text-align: center;
-      margin-top: 2em;
-    }
-    .btn {
-      background-color: #2196f3;
-      border: none;
-      border-radius: 6px;
-      color: #fff;
-      padding: 8px 16px;
-      font-size: 0.95em;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    .btn:hover {
-      background-color: #1976d2;
-    }
-  </style>
-</head>
-<body>
-  <h1>AI vs Human Code Overview</h1>
-  <div id="summary" class="summary"></div>
-
-  <div class="progress-container">
-    <div id="bar-human" class="progress-human"></div>
-    <div id="bar-ai" class="progress-ai"></div>
-  </div>
-
-  <div class="chart-container">
-    <canvas id="pieChart"></canvas>
-  </div>
-
-  <div class="controls">
-    <button id="resetBtn" class="btn">🔄 Reset Stats</button>
-  </div>
-
-  <script>
-    const vscode = acquireVsCodeApi(); // connect to extension
-    vscode.postMessage('ready');       // tell extension dashboard is ready
-
-    let chart;
-    const ctx = document.getElementById('pieChart').getContext('2d');
-
-    function render(human, ai) {
-      const total = human + ai || 1;
-      const humanPct = ((human / total) * 100).toFixed(2);
-      const aiPct = ((ai / total) * 100).toFixed(2);
-
-      document.getElementById('summary').innerHTML = `
-        👨‍💻 <b>Human:</b> ${human} lines (${humanPct}%)
-        <br>🤖 <b>AI:</b> ${ai} lines (${aiPct}%)
-        <br><br>📊 <b>Total:</b> ${total} lines
-      `;
-      document.getElementById('bar-human').style.width = humanPct + '%';
-      document.getElementById('bar-ai').style.width = aiPct + '%';
-
-      if (chart) chart.destroy();
-      chart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Human', 'AI'],
-          datasets: [{
-            data: [human, ai],
-            backgroundColor: ['#4caf50', '#f44336'],
-            borderColor: '#1e1e1e',
-            borderWidth: 2,
-          }],
-        },
-        options: {
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: { color: '#f5f5f5', font: { size: 14 } },
-            },
-          },
-        },
-      });
-    }
-
-    // Initial render from injected vars
-    const humanInit = typeof HUMAN_VALUE !== 'undefined' ? HUMAN_VALUE : 0;
-    const aiInit = typeof AI_VALUE !== 'undefined' ? AI_VALUE : 0;
-    render(humanInit, aiInit);
-
-    // 🔄 Live updates from extension.ts
-    window.addEventListener('message', event => {
-      const { human, ai } = event.data || {};
-      if (typeof human === 'number' && typeof ai === 'number') {
-        render(human, ai);
-      }
-    });
-
-    // 🔘 Reset button
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      vscode.postMessage({ command: 'reset' });
-    });
-  </script>
-</body>
-</html> -->
-
-
-
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background-color: #1e1e1e;
-      color: #f5f5f5;
       margin: 0;
       padding: 0;
       display: flex;
@@ -343,6 +192,381 @@
     });
 
     // Reset button
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      vscode.postMessage({ command: 'reset' });
+    });
+  </script>
+</body>
+</html> -->
+
+<!-- 
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: #1e1e1e;
+      color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      background-color: #252526;
+      padding: 1.6em 2.2em;
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      width: 460px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.3em;
+      margin-bottom: 0.7em;
+      color: #fff;
+    }
+
+    .summary {
+      font-size: 0.9em;
+      margin-bottom: 1.1em;
+      line-height: 1.4em;
+      color: #dcdcdc;
+    }
+
+    .progress-container {
+      width: 100%;
+      background-color: #333;
+      border-radius: 8px;
+      margin: 0.8em 0;
+      height: 18px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .progress-human {
+      background: linear-gradient(90deg, #4caf50, #81c784);
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+
+    .progress-ai {
+      background: linear-gradient(90deg, #f44336, #e57373);
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+
+    .chart-container {
+      width: 220px;
+      margin: 1.2em auto 0.8em;
+    }
+
+    .ai-breakdown {
+      text-align: left;
+      margin: 0.8em auto;
+      width: 90%;
+      font-size: 0.85em;
+      color: #ccc;
+    }
+
+    .ai-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+    }
+
+    .ai-label {
+      font-weight: 500;
+    }
+
+    .ai-value {
+      color: #eee;
+    }
+
+    .controls {
+      margin-top: 1em;
+    }
+
+    .btn {
+      background: linear-gradient(90deg, #2196f3, #42a5f5);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      padding: 6px 14px;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn:hover {
+      background: linear-gradient(90deg, #1976d2, #1e88e5);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>AI vs Human Code Stats</h1>
+    <div id="summary" class="summary"></div>
+
+    <div class="progress-container">
+      <div id="bar-human" class="progress-human"></div>
+      <div id="bar-ai" class="progress-ai"></div>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="pieChart"></canvas>
+    </div>
+
+    <div class="ai-breakdown" id="aiBreakdown"></div>
+
+    <div class="controls">
+      <button id="resetBtn" class="btn">🔄 Reset Stats</button>
+    </div>
+  </div>
+
+  <script>
+    const vscode = acquireVsCodeApi();
+    vscode.postMessage('ready');
+
+    let chart;
+    const ctx = document.getElementById('pieChart').getContext('2d');
+
+    function render(human, ai, copilot, chatgpt, claude, gemini, codeium) {
+      const total = human + ai || 1;
+      const humanPct = ((human / total) * 100).toFixed(1);
+      const aiPct = ((ai / total) * 100).toFixed(1);
+
+      document.getElementById('summary').innerHTML = `
+        👨‍💻 <b>${human}</b> lines (${humanPct}%)
+        <br>🤖 <b>${ai}</b> lines (${aiPct}%)
+        <br><br>📊 <b>Total:</b> ${total} lines
+      `;
+
+      document.getElementById('bar-human').style.width = humanPct + '%';
+      document.getElementById('bar-ai').style.width = aiPct + '%';
+
+      // AI vendor breakdown
+      const breakdownHTML = `
+        <div class="ai-row"><span class="ai-label" style="color:#f44336">🤖 Copilot</span><span class="ai-value">${copilot}</span></div>
+        <div class="ai-row"><span class="ai-label" style="color:#03a9f4">💬 ChatGPT</span><span class="ai-value">${chatgpt}</span></div>
+        <div class="ai-row"><span class="ai-label" style="color:#ffb300">✨ Claude</span><span class="ai-value">${claude}</span></div>
+        <div class="ai-row"><span class="ai-label" style="color:#00e676">🧠 Gemini</span><span class="ai-value">${gemini}</span></div>
+        <div class="ai-row"><span class="ai-label" style="color:#9c27b0">⚙️ Codeium</span><span class="ai-value">${codeium}</span></div>
+      `;
+      document.getElementById('aiBreakdown').innerHTML = breakdownHTML;
+
+      // Doughnut Chart
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Human', 'Copilot', 'ChatGPT', 'Claude', 'Gemini', 'Codeium'],
+          datasets: [{
+            data: [human, copilot, chatgpt, claude, gemini, codeium],
+            backgroundColor: ['#4caf50', '#f44336', '#03a9f4', '#ffb300', '#00e676', '#9c27b0'],
+            borderColor: '#252526',
+            borderWidth: 2,
+            hoverOffset: 8,
+          }],
+        },
+        options: {
+          cutout: '70%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#ccc', font: { size: 12 } },
+            },
+            tooltip: {
+              backgroundColor: '#333',
+              titleFont: { size: 13 },
+              bodyFont: { size: 12 },
+              callbacks: {
+                label: (context) =>
+                  `${context.label}: ${context.formattedValue} lines (${(
+                    (context.parsed / total) *
+                    100
+                  ).toFixed(1)}%)`,
+              },
+            },
+          },
+        },
+      });
+    }
+
+    // Initial render
+    render(
+      typeof HUMAN_VALUE !== 'undefined' ? HUMAN_VALUE : 0,
+      typeof AI_VALUE !== 'undefined' ? AI_VALUE : 0,
+      typeof COPILOT_VALUE !== 'undefined' ? COPILOT_VALUE : 0,
+      typeof CHATGPT_VALUE !== 'undefined' ? CHATGPT_VALUE : 0,
+      typeof CLAUDE_VALUE !== 'undefined' ? CLAUDE_VALUE : 0,
+      typeof GEMINI_VALUE !== 'undefined' ? GEMINI_VALUE : 0,
+      typeof CODEIUM_VALUE !== 'undefined' ? CODEIUM_VALUE : 0
+    );
+
+    // Live updates
+    window.addEventListener('message', event => {
+      const { human, ai, copilot, chatgpt, claude, gemini, codeium } = event.data || {};
+      if (typeof human === 'number' && typeof ai === 'number') {
+        render(human, ai, copilot, chatgpt, claude, gemini, codeium);
+      }
+    });
+
+    // Reset button
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      vscode.postMessage({ command: 'reset' });
+    });
+  </script>
+</body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Allow JS execution inside VSCode webview -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https:; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline';" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: #1e1e1e;
+      color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card {
+      background-color: #252526;
+      padding: 1.8em 2.2em;
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      width: 480px;
+      text-align: center;
+    }
+    h1 { font-size: 1.3em; margin-bottom: 0.6em; color: #fff; }
+    .summary { font-size: 0.9em; margin-bottom: 1em; color: #ddd; }
+    .progress-container {
+      width: 100%; background-color: #333; border-radius: 8px;
+      margin: 1em 0; height: 18px; overflow: hidden; display: flex;
+    }
+    .progress-human { background: linear-gradient(90deg, #4caf50, #81c784); height: 100%; transition: width 0.5s ease; }
+    .progress-ai { background: linear-gradient(90deg, #f44336, #e57373); height: 100%; transition: width 0.5s ease; }
+    .chart-container { width: 220px; margin: 1.2em auto 0.8em; }
+    .ai-breakdown { text-align: left; width: 90%; margin: 1em auto 0; font-size: 0.85em; }
+    .ai-row { display: flex; justify-content: space-between; padding: 3px 0; }
+    .controls { margin-top: 1em; }
+    .btn {
+      background: linear-gradient(90deg, #2196f3, #42a5f5);
+      border: none; border-radius: 6px; color: #fff;
+      padding: 6px 14px; font-size: 0.9em; cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .btn:hover { background: linear-gradient(90deg, #1976d2, #1e88e5); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>AI vs Human Code Stats</h1>
+    <div id="summary" class="summary"></div>
+    <div class="progress-container">
+      <div id="bar-human" class="progress-human"></div>
+      <div id="bar-ai" class="progress-ai"></div>
+    </div>
+    <div class="chart-container"><canvas id="pieChart"></canvas></div>
+    <div class="ai-breakdown" id="aiBreakdown"></div>
+    <div class="controls"><button id="resetBtn" class="btn">🔄 Reset Stats</button></div>
+  </div>
+
+  <script>
+    const vscode = acquireVsCodeApi();
+
+    // Tell VSCode we're ready a little later (ensures panel is initialized)
+    setTimeout(() => vscode.postMessage('ready'), 300);
+
+    let chart;
+    const ctx = document.getElementById('pieChart').getContext('2d');
+
+    function render(human, ai, copilot, chatgpt, claude, gemini, codeium, qodogen, windsurf) {
+      const total = human + ai || 1;
+      const humanPct = ((human / total) * 100).toFixed(1);
+      const aiPct = ((ai / total) * 100).toFixed(1);
+
+      document.getElementById('summary').innerHTML = `
+        👨‍💻 <b>${human}</b> lines (${humanPct}%)
+        <br>🤖 <b>${ai}</b> lines (${aiPct}%)
+        <br><br>📊 <b>Total:</b> ${total} lines
+      `;
+      document.getElementById('bar-human').style.width = humanPct + '%';
+      document.getElementById('bar-ai').style.width = aiPct + '%';
+
+      const breakdownHTML = `
+        <div class="ai-row"><span style="color:#f44336">🤖 Copilot</span><span>${copilot}</span></div>
+        <div class="ai-row"><span style="color:#03a9f4">💬 ChatGPT</span><span>${chatgpt}</span></div>
+        <div class="ai-row"><span style="color:#ffb300">✨ Claude</span><span>${claude}</span></div>
+        <div class="ai-row"><span style="color:#00e676">🧠 Gemini</span><span>${gemini}</span></div>
+        <div class="ai-row"><span style="color:#9c27b0">⚙️ Codeium</span><span>${codeium}</span></div>
+        <div class="ai-row"><span style="color:#8bc34a">💡 Qodo Gen</span><span>${qodogen}</span></div>
+        <div class="ai-row"><span style="color:#ff7043">🌊 Windsurf</span><span>${windsurf}</span></div>
+      `;
+      document.getElementById('aiBreakdown').innerHTML = breakdownHTML;
+
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Human','Copilot','ChatGPT','Claude','Gemini','Codeium','Qodo Gen','Windsurf'],
+          datasets: [{
+            data: [human, copilot, chatgpt, claude, gemini, codeium, qodogen, windsurf],
+            backgroundColor: ['#4caf50','#f44336','#03a9f4','#ffb300','#00e676','#9c27b0','#8bc34a','#ff7043'],
+            borderColor: '#252526',
+            borderWidth: 2,
+            hoverOffset: 8,
+          }],
+        },
+        options: {
+          cutout: '70%',
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 11 } } },
+            tooltip: {
+              backgroundColor: '#333',
+              bodyFont: { size: 12 },
+              callbacks: {
+                label: ctx =>
+                  `${ctx.label}: ${ctx.formattedValue} lines (${((ctx.parsed / total) * 100).toFixed(1)}%)`,
+              },
+            },
+          },
+        },
+      });
+    }
+
+    // Listen for updates from extension.ts
+    window.addEventListener('message', e => {
+      const d = e.data || {};
+      if (typeof d.human === 'number') {
+        render(
+          d.human, d.ai, d.copilot, d.chatgpt, d.claude,
+          d.gemini, d.codeium, d.qodogen, d.windsurf
+        );
+      }
+    });
+
+    // Reset button handler
     document.getElementById('resetBtn').addEventListener('click', () => {
       vscode.postMessage({ command: 'reset' });
     });

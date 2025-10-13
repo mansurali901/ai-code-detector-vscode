@@ -37,14 +37,7 @@ It highlights human-written and AI-generated code in the editor, tracks live lin
 ## 📸 Screenshots
 
 ### 🧭 Dashboard
-![Screenshot](StatusDashboard.png)
 
-### 🧩 OnHover Tooltip
-![Screenshot](Onhover-AIGenerated.png)
-![Screenshot](Onhover-HumanWritten.png)
-### 🧭 Bottom Status Bar
-![Screenshot](BottomStatusBar.png)
----
 
 ## ⚙️ Installation
 

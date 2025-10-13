@@ -1,38 +1,62 @@
 {
-    "name": "vscode-ai-tracker",
-    "displayName": "AI vs Human Code Tracker",
-    "description": "Tracks how much of your code is written by humans vs AI tools like Copilot or ChatGPT.",
-    "version": "0.0.1",
-    "publisher": "your-name",
+    "name": "ai-tracker",
+    "displayName": "AI Tracker",
+    "description": "Detects AI vs Human code contributions (Copilot, ChatGPT, Claude, Gemini, Codeium, QodoGen, Windsurf).",
+    "version": "1.0.2",
+    "publisher": "Mansoor Ul Hasan",
     "engines": {
-        "vscode": "^1.85.0"
+      "vscode": "^1.75.0"
     },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "onStartupFinished",
-        "onCommand:aianalytics.showStats"
-    ],
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/mansurali901/ai-code-detector-vscode"
+    },
+    "icon": "extension/images/icon.png",
     "main": "./out/extension.js",
+  
+    "activationEvents": [
+      "onStartupFinished"
+    ],
+  
     "contributes": {
-        "commands": [
-            {
-                "command": "aianalytics.showStats",
-                "title": "Show AI vs Human Stats"
-            }
-        ]
+      "commands": [
+        {
+          "command": "aianalytics.showStats",
+          "title": "AI Analytics: Show Stats",
+          "category": "AI Analytics"
+        }
+      ]
     },
+  
     "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "package": "vsce package"
+      "vscode:prepublish": "npm run compile",
+      "compile": "tsc -p ./",
+      "watch": "tsc -watch -p ./"
     },
+  
     "devDependencies": {
-        "@types/node": "^24.7.1",
-        "@types/vscode": "^1.85.0",
-        "typescript": "^5.4.0",
-        "vsce": "^2.15.0"
-    }
-}
+      "@types/vscode": "^1.75.0",
+      "@types/node": "^20.0.0",
+      "typescript": "^5.3.0",
+      "eslint": "^8.0.0",
+      "vsce": "^2.15.0"
+    },
+  
+    "categories": [
+      "Other",
+      "Programming Languages",
+      "Linters"
+    ],
+  
+    "keywords": [
+      "AI",
+      "Copilot",
+      "ChatGPT",
+      "Claude",
+      "Gemini",
+      "Codeium",
+      "Developer Analytics",
+      "Productivity"
+    ]
+  }
+  
