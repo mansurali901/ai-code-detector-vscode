@@ -1,7 +1,11 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'none'; img-src vscode-resource: https:; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline';"
+  />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
@@ -20,29 +24,21 @@
       background-color: #252526;
       padding: 1.8em 2.2em;
       border-radius: 14px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-      width: 420px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      width: 480px;
       text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.3s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
     }
 
     h1 {
-      font-size: 1.4em;
-      margin-bottom: 0.8em;
+      font-size: 1.3em;
+      margin-bottom: 0.6em;
       color: #fff;
-      letter-spacing: 0.5px;
     }
 
     .summary {
-      font-size: 0.95em;
-      margin-bottom: 1.2em;
-      line-height: 1.4em;
-      color: #dcdcdc;
+      font-size: 0.9em;
+      margin-bottom: 1em;
+      color: #ddd;
     }
 
     .progress-container {
@@ -50,203 +46,6 @@
       background-color: #333;
       border-radius: 8px;
       margin: 1em 0;
-      height: 20px;
-      overflow: hidden;
-      display: flex;
-    }
-
-    .progress-human {
-      background: linear-gradient(90deg, #4caf50, #81c784);
-      height: 100%;
-      transition: width 0.5s ease;
-    }
-
-    .progress-ai {
-      background: linear-gradient(90deg, #f44336, #e57373);
-      height: 100%;
-      transition: width 0.5s ease;
-    }
-
-    .chart-container {
-      width: 180px;
-      margin: 1.5em auto;
-    }
-
-    .controls {
-      margin-top: 1em;
-    }
-
-    .btn {
-      background: linear-gradient(90deg, #2196f3, #42a5f5);
-      border: none;
-      border-radius: 6px;
-      color: #fff;
-      padding: 6px 14px;
-      font-size: 0.9em;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .btn:hover {
-      background: linear-gradient(90deg, #1976d2, #1e88e5);
-    }
-
-    canvas {
-      max-width: 100%;
-      height: auto;
-    }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>AI vs Human Code Stats</h1>
-    <div id="summary" class="summary"></div>
-
-    <div class="progress-container">
-      <div id="bar-human" class="progress-human"></div>
-      <div id="bar-ai" class="progress-ai"></div>
-    </div>
-
-    <div class="chart-container">
-      <canvas id="pieChart"></canvas>
-    </div>
-
-    <div class="controls">
-      <button id="resetBtn" class="btn">🔄 Reset Stats</button>
-    </div>
-  </div>
-
-  <script>
-    const vscode = acquireVsCodeApi();
-    vscode.postMessage('ready');
-
-    let chart;
-    const ctx = document.getElementById('pieChart').getContext('2d');
-
-    function render(human, ai) {
-      const total = human + ai || 1;
-      const humanPct = ((human / total) * 100).toFixed(1);
-      const aiPct = ((ai / total) * 100).toFixed(1);
-
-      document.getElementById('summary').innerHTML = `
-        👨‍💻 <b>${human}</b> lines (${humanPct}%)
-        <br>🤖 <b>${ai}</b> lines (${aiPct}%)
-        <br><br>📊 <b>Total:</b> ${total} lines
-      `;
-
-      document.getElementById('bar-human').style.width = humanPct + '%';
-      document.getElementById('bar-ai').style.width = aiPct + '%';
-
-      if (chart) chart.destroy();
-      chart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Human', 'AI'],
-          datasets: [{
-            data: [human, ai],
-            backgroundColor: ['#4caf50', '#f44336'],
-            borderColor: '#252526',
-            borderWidth: 3,
-            hoverOffset: 8,
-          }],
-        },
-        options: {
-          cutout: '70%', // smaller chart, more elegant
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: { color: '#ccc', font: { size: 13 } },
-            },
-            tooltip: {
-              backgroundColor: '#333',
-              titleFont: { size: 13 },
-              bodyFont: { size: 12 },
-              callbacks: {
-                label: (context) =>
-                  `${context.label}: ${context.formattedValue} lines (${(
-                    (context.parsed / total) *
-                    100
-                  ).toFixed(1)}%)`,
-              },
-            },
-          },
-          animation: {
-            animateRotate: true,
-            animateScale: true,
-          },
-        },
-      });
-    }
-
-    // Initial render
-    const humanInit = typeof HUMAN_VALUE !== 'undefined' ? HUMAN_VALUE : 0;
-    const aiInit = typeof AI_VALUE !== 'undefined' ? AI_VALUE : 0;
-    render(humanInit, aiInit);
-
-    // Live updates
-    window.addEventListener('message', event => {
-      const { human, ai } = event.data || {};
-      if (typeof human === 'number' && typeof ai === 'number') {
-        render(human, ai);
-      }
-    });
-
-    // Reset button
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      vscode.postMessage({ command: 'reset' });
-    });
-  </script>
-</body>
-</html> -->
-
-<!-- 
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background-color: #1e1e1e;
-      color: #f5f5f5;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .card {
-      background-color: #252526;
-      padding: 1.6em 2.2em;
-      border-radius: 14px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-      width: 460px;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 1.3em;
-      margin-bottom: 0.7em;
-      color: #fff;
-    }
-
-    .summary {
-      font-size: 0.9em;
-      margin-bottom: 1.1em;
-      line-height: 1.4em;
-      color: #dcdcdc;
-    }
-
-    .progress-container {
-      width: 100%;
-      background-color: #333;
-      border-radius: 8px;
-      margin: 0.8em 0;
       height: 18px;
       overflow: hidden;
       display: flex;
@@ -264,6 +63,18 @@
       transition: width 0.5s ease;
     }
 
+    .progress-inline {
+      background: linear-gradient(90deg, #2196f3, #64b5f6);
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+
+    .progress-chat {
+      background: linear-gradient(90deg, #ff9800, #ffb74d);
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+
     .chart-container {
       width: 220px;
       margin: 1.2em auto 0.8em;
@@ -271,24 +82,15 @@
 
     .ai-breakdown {
       text-align: left;
-      margin: 0.8em auto;
       width: 90%;
+      margin: 1em auto 0;
       font-size: 0.85em;
-      color: #ccc;
     }
 
     .ai-row {
       display: flex;
       justify-content: space-between;
       padding: 3px 0;
-    }
-
-    .ai-label {
-      font-weight: 500;
-    }
-
-    .ai-value {
-      color: #eee;
     }
 
     .controls {
@@ -309,114 +111,229 @@
     .btn:hover {
       background: linear-gradient(90deg, #1976d2, #1e88e5);
     }
+
+    .time-section {
+      margin-top: 1em;
+      font-size: 0.8em;
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 2px 0;
+    }
+
+    #timeChart {
+      max-width: 300px;
+      margin: 10px auto;
+    }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>AI vs Human Code Stats</h1>
     <div id="summary" class="summary"></div>
-
     <div class="progress-container">
       <div id="bar-human" class="progress-human"></div>
       <div id="bar-ai" class="progress-ai"></div>
     </div>
-
+    <div class="progress-container">
+      <div id="bar-inline" class="progress-inline"></div>
+      <div id="bar-chat" class="progress-chat"></div>
+    </div>
     <div class="chart-container">
       <canvas id="pieChart"></canvas>
     </div>
-
     <div class="ai-breakdown" id="aiBreakdown"></div>
-
     <div class="controls">
-      <button id="resetBtn" class="btn">🔄 Reset Stats</button>
+      <button id="resetBtn" class="btn">Reset Stats</button>
+    </div>
+    <div class="time-section" id="timeSection" style="display: none;">
+      <h3>Time Patterns (Total: <span id="totalTime">0</span>s)</h3>
+      <canvas id="timeChart"></canvas>
+      <div id="sessionSummary"></div>
     </div>
   </div>
 
   <script>
     const vscode = acquireVsCodeApi();
-    vscode.postMessage('ready');
 
-    let chart;
+    // Capture injected initial values (from extension.ts)
+    const initialData = {
+      human: typeof HUMAN_VALUE !== 'undefined' ? HUMAN_VALUE : 0,
+      ai: typeof AI_VALUE !== 'undefined' ? AI_VALUE : 0,
+      inline: typeof INLINE_VALUE !== 'undefined' ? INLINE_VALUE : 0,
+      copilot: typeof COPILOT_VALUE !== 'undefined' ? COPILOT_VALUE : 0,
+      chatgpt: typeof CHATGPT_VALUE !== 'undefined' ? CHATGPT_VALUE : 0,
+      claude: typeof CLAUDE_VALUE !== 'undefined' ? CLAUDE_VALUE : 0,
+      gemini: typeof GEMINI_VALUE !== 'undefined' ? GEMINI_VALUE : 0,
+      codeium: typeof CODEIUM_VALUE !== 'undefined' ? CODEIUM_VALUE : 0,
+      qodogen: typeof QODOGEN_VALUE !== 'undefined' ? QODOGEN_VALUE : 0,
+      windsurf: typeof WINDSURF_VALUE !== 'undefined' ? WINDSURF_VALUE : 0,
+      sessions: typeof SESSIONS !== 'undefined' ? SESSIONS : [],
+    };
+
+    // Tell VSCode we're ready (triggers update)
+    setTimeout(() => vscode.postMessage('ready'), 300);
+
+    let chart, timeChart;
     const ctx = document.getElementById('pieChart').getContext('2d');
+    const timeCtx = document.getElementById('timeChart').getContext('2d');
 
-    function render(human, ai, copilot, chatgpt, claude, gemini, codeium) {
+    function render(human, ai, inline, copilot, chatgpt, claude, gemini, codeium, qodogen, windsurf, sessions) {
       const total = human + ai || 1;
       const humanPct = ((human / total) * 100).toFixed(1);
       const aiPct = ((ai / total) * 100).toFixed(1);
+      const aiTotal = ai || 1;
+      const inlinePct = ((inline / aiTotal) * 100).toFixed(1);
+      const chat = ai - inline;
+      const chatPct = ((chat / aiTotal) * 100).toFixed(1);
 
+      // Summary and progress bars
       document.getElementById('summary').innerHTML = `
-        👨‍💻 <b>${human}</b> lines (${humanPct}%)
-        <br>🤖 <b>${ai}</b> lines (${aiPct}%)
-        <br><br>📊 <b>Total:</b> ${total} lines
+        <b>${human}</b> lines (${humanPct}%)
+        <br><b>${ai}</b> lines (${aiPct}%)
+        <br>Inline: <b>${inline}</b> lines (${inlinePct}%)
+        <br>Chat/Other: <b>${chat}</b> lines (${chatPct}%)
+        <br><br>Total: ${total} lines
       `;
-
       document.getElementById('bar-human').style.width = humanPct + '%';
       document.getElementById('bar-ai').style.width = aiPct + '%';
+      document.getElementById('bar-inline').style.width = inlinePct + '%';
+      document.getElementById('bar-chat').style.width = chatPct + '%';
 
-      // AI vendor breakdown
+      // AI Breakdown
       const breakdownHTML = `
-        <div class="ai-row"><span class="ai-label" style="color:#f44336">🤖 Copilot</span><span class="ai-value">${copilot}</span></div>
-        <div class="ai-row"><span class="ai-label" style="color:#03a9f4">💬 ChatGPT</span><span class="ai-value">${chatgpt}</span></div>
-        <div class="ai-row"><span class="ai-label" style="color:#ffb300">✨ Claude</span><span class="ai-value">${claude}</span></div>
-        <div class="ai-row"><span class="ai-label" style="color:#00e676">🧠 Gemini</span><span class="ai-value">${gemini}</span></div>
-        <div class="ai-row"><span class="ai-label" style="color:#9c27b0">⚙️ Codeium</span><span class="ai-value">${codeium}</span></div>
+        <div class="ai-row"><span style="color:#f44336">Copilot</span><span>${copilot}</span></div>
+        <div class="ai-row"><span style="color:#03a9f4">ChatGPT</span><span>${chatgpt}</span></div>
+        <div class="ai-row"><span style="color:#ffb300">Claude</span><span>${claude}</span></div>
+        <div class="ai-row"><span style="color:#00e676">Gemini</span><span>${gemini}</span></div>
+        <div class="ai-row"><span style="color:#9c27b0">Codeium</span><span>${codeium}</span></div>
+        <div class="ai-row"><span style="color:#8bc34a">Qodo Gen</span><span>${qodogen}</span></div>
+        <div class="ai-row"><span style="color:#ff7043">Windsurf</span><span>${windsurf}</span></div>
       `;
       document.getElementById('aiBreakdown').innerHTML = breakdownHTML;
 
-      // Doughnut Chart
+      // Main Pie/Doughnut Chart
       if (chart) chart.destroy();
       chart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['Human', 'Copilot', 'ChatGPT', 'Claude', 'Gemini', 'Codeium'],
-          datasets: [{
-            data: [human, copilot, chatgpt, claude, gemini, codeium],
-            backgroundColor: ['#4caf50', '#f44336', '#03a9f4', '#ffb300', '#00e676', '#9c27b0'],
-            borderColor: '#252526',
-            borderWidth: 2,
-            hoverOffset: 8,
-          }],
+          labels: ['Human', 'Copilot', 'ChatGPT', 'Claude', 'Gemini', 'Codeium', 'Qodo Gen', 'Windsurf'],
+          datasets: [
+            {
+              data: [human, copilot, chatgpt, claude, gemini, codeium, qodogen, windsurf],
+              backgroundColor: ['#4caf50', '#f44336', '#03a9f4', '#ffb300', '#00e676', '#9c27b0', '#8bc34a', '#ff7043'],
+              borderColor: '#252526',
+              borderWidth: 2,
+              hoverOffset: 8,
+            },
+          ],
         },
         options: {
           cutout: '70%',
           plugins: {
             legend: {
               position: 'bottom',
-              labels: { color: '#ccc', font: { size: 12 } },
+              labels: { color: '#ccc', font: { size: 11 } },
             },
             tooltip: {
               backgroundColor: '#333',
-              titleFont: { size: 13 },
               bodyFont: { size: 12 },
               callbacks: {
-                label: (context) =>
-                  `${context.label}: ${context.formattedValue} lines (${(
-                    (context.parsed / total) *
-                    100
-                  ).toFixed(1)}%)`,
+                label: (ctx) =>
+                  `${ctx.label}: ${ctx.formattedValue} lines (${((ctx.parsed / total) * 100).toFixed(1)}%)`,
               },
             },
           },
         },
       });
+
+      // Time Patterns Section
+      if (sessions && sessions.length > 0) {
+        document.getElementById('timeSection').style.display = 'block';
+        const totalTime = sessions.reduce((sum, s) => sum + (s.duration || 0), 0);
+        document.getElementById('totalTime').textContent = Math.round(totalTime / 1000);
+
+        // Accumulate durations per provider correctly
+        const providerDurations = {};
+        sessions.forEach((s) => {
+          if (s.duration) {
+            if (!providerDurations[s.provider]) providerDurations[s.provider] = [];
+            providerDurations[s.provider].push(s.duration);
+          }
+        });
+
+        const providerAvg = {};
+        Object.keys(providerDurations).forEach((p) => {
+          const durations = providerDurations[p];
+          const avg = durations.reduce((a, b) => a + b, 0) / durations.length;
+          providerAvg[p] = Math.round(avg / 1000); // seconds
+        });
+
+        // Summary rows
+        let summary = '';
+        Object.entries(providerAvg).forEach(([p, avg]) => {
+          summary += `<div class="time-row"><span>${p}</span><span>${avg}s avg</span></div>`;
+        });
+        document.getElementById('sessionSummary').innerHTML = summary;
+
+        // Bar chart for averages
+        if (timeChart) timeChart.destroy();
+        timeChart = new Chart(timeCtx, {
+          type: 'bar',
+          data: {
+            labels: Object.keys(providerAvg),
+            datasets: [
+              {
+                label: 'Avg Session (s)',
+                data: Object.values(providerAvg),
+                backgroundColor: '#2196f3',
+              },
+            ],
+          },
+          options: {
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { display: false } },
+          },
+        });
+      } else {
+        document.getElementById('timeSection').style.display = 'none';
+      }
     }
 
-    // Initial render
+    // Initial render with injected data (if any)
     render(
-      typeof HUMAN_VALUE !== 'undefined' ? HUMAN_VALUE : 0,
-      typeof AI_VALUE !== 'undefined' ? AI_VALUE : 0,
-      typeof COPILOT_VALUE !== 'undefined' ? COPILOT_VALUE : 0,
-      typeof CHATGPT_VALUE !== 'undefined' ? CHATGPT_VALUE : 0,
-      typeof CLAUDE_VALUE !== 'undefined' ? CLAUDE_VALUE : 0,
-      typeof GEMINI_VALUE !== 'undefined' ? GEMINI_VALUE : 0,
-      typeof CODEIUM_VALUE !== 'undefined' ? CODEIUM_VALUE : 0
+      initialData.human,
+      initialData.ai,
+      initialData.inline,
+      initialData.copilot,
+      initialData.chatgpt,
+      initialData.claude,
+      initialData.gemini,
+      initialData.codeium,
+      initialData.qodogen,
+      initialData.windsurf,
+      initialData.sessions
     );
 
-    // Live updates
-    window.addEventListener('message', event => {
-      const { human, ai, copilot, chatgpt, claude, gemini, codeium } = event.data || {};
-      if (typeof human === 'number' && typeof ai === 'number') {
-        render(human, ai, copilot, chatgpt, claude, gemini, codeium);
+    // Listen for live updates from extension.ts
+    window.addEventListener('message', (e) => {
+      const d = e.data || {};
+      if (typeof d.human === 'number') {
+        render(
+          d.human,
+          d.ai,
+          d.inline,
+          d.copilot,
+          d.chatgpt,
+          d.claude,
+          d.gemini,
+          d.codeium,
+          d.qodogen,
+          d.windsurf,
+          d.sessions
+        );
       }
     });
 
@@ -426,150 +343,6 @@
     });
   </script>
 </body>
-</html> -->
-
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <!-- Allow JS execution inside VSCode webview -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https:; script-src 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'unsafe-inline';" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background-color: #1e1e1e;
-      color: #f5f5f5;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .card {
-      background-color: #252526;
-      padding: 1.8em 2.2em;
-      border-radius: 14px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-      width: 480px;
-      text-align: center;
-    }
-    h1 { font-size: 1.3em; margin-bottom: 0.6em; color: #fff; }
-    .summary { font-size: 0.9em; margin-bottom: 1em; color: #ddd; }
-    .progress-container {
-      width: 100%; background-color: #333; border-radius: 8px;
-      margin: 1em 0; height: 18px; overflow: hidden; display: flex;
-    }
-    .progress-human { background: linear-gradient(90deg, #4caf50, #81c784); height: 100%; transition: width 0.5s ease; }
-    .progress-ai { background: linear-gradient(90deg, #f44336, #e57373); height: 100%; transition: width 0.5s ease; }
-    .chart-container { width: 220px; margin: 1.2em auto 0.8em; }
-    .ai-breakdown { text-align: left; width: 90%; margin: 1em auto 0; font-size: 0.85em; }
-    .ai-row { display: flex; justify-content: space-between; padding: 3px 0; }
-    .controls { margin-top: 1em; }
-    .btn {
-      background: linear-gradient(90deg, #2196f3, #42a5f5);
-      border: none; border-radius: 6px; color: #fff;
-      padding: 6px 14px; font-size: 0.9em; cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    .btn:hover { background: linear-gradient(90deg, #1976d2, #1e88e5); }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>AI vs Human Code Stats</h1>
-    <div id="summary" class="summary"></div>
-    <div class="progress-container">
-      <div id="bar-human" class="progress-human"></div>
-      <div id="bar-ai" class="progress-ai"></div>
-    </div>
-    <div class="chart-container"><canvas id="pieChart"></canvas></div>
-    <div class="ai-breakdown" id="aiBreakdown"></div>
-    <div class="controls"><button id="resetBtn" class="btn">🔄 Reset Stats</button></div>
-  </div>
-
-  <script>
-    const vscode = acquireVsCodeApi();
-
-    // Tell VSCode we're ready a little later (ensures panel is initialized)
-    setTimeout(() => vscode.postMessage('ready'), 300);
-
-    let chart;
-    const ctx = document.getElementById('pieChart').getContext('2d');
-
-    function render(human, ai, copilot, chatgpt, claude, gemini, codeium, qodogen, windsurf) {
-      const total = human + ai || 1;
-      const humanPct = ((human / total) * 100).toFixed(1);
-      const aiPct = ((ai / total) * 100).toFixed(1);
-
-      document.getElementById('summary').innerHTML = `
-        👨‍💻 <b>${human}</b> lines (${humanPct}%)
-        <br>🤖 <b>${ai}</b> lines (${aiPct}%)
-        <br><br>📊 <b>Total:</b> ${total} lines
-      `;
-      document.getElementById('bar-human').style.width = humanPct + '%';
-      document.getElementById('bar-ai').style.width = aiPct + '%';
-
-      const breakdownHTML = `
-        <div class="ai-row"><span style="color:#f44336">🤖 Copilot</span><span>${copilot}</span></div>
-        <div class="ai-row"><span style="color:#03a9f4">💬 ChatGPT</span><span>${chatgpt}</span></div>
-        <div class="ai-row"><span style="color:#ffb300">✨ Claude</span><span>${claude}</span></div>
-        <div class="ai-row"><span style="color:#00e676">🧠 Gemini</span><span>${gemini}</span></div>
-        <div class="ai-row"><span style="color:#9c27b0">⚙️ Codeium</span><span>${codeium}</span></div>
-        <div class="ai-row"><span style="color:#8bc34a">💡 Qodo Gen</span><span>${qodogen}</span></div>
-        <div class="ai-row"><span style="color:#ff7043">🌊 Windsurf</span><span>${windsurf}</span></div>
-      `;
-      document.getElementById('aiBreakdown').innerHTML = breakdownHTML;
-
-      if (chart) chart.destroy();
-      chart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Human','Copilot','ChatGPT','Claude','Gemini','Codeium','Qodo Gen','Windsurf'],
-          datasets: [{
-            data: [human, copilot, chatgpt, claude, gemini, codeium, qodogen, windsurf],
-            backgroundColor: ['#4caf50','#f44336','#03a9f4','#ffb300','#00e676','#9c27b0','#8bc34a','#ff7043'],
-            borderColor: '#252526',
-            borderWidth: 2,
-            hoverOffset: 8,
-          }],
-        },
-        options: {
-          cutout: '70%',
-          plugins: {
-            legend: { position: 'bottom', labels: { color: '#ccc', font: { size: 11 } } },
-            tooltip: {
-              backgroundColor: '#333',
-              bodyFont: { size: 12 },
-              callbacks: {
-                label: ctx =>
-                  `${ctx.label}: ${ctx.formattedValue} lines (${((ctx.parsed / total) * 100).toFixed(1)}%)`,
-              },
-            },
-          },
-        },
-      });
-    }
-
-    // Listen for updates from extension.ts
-    window.addEventListener('message', e => {
-      const d = e.data || {};
-      if (typeof d.human === 'number') {
-        render(
-          d.human, d.ai, d.copilot, d.chatgpt, d.claude,
-          d.gemini, d.codeium, d.qodogen, d.windsurf
-        );
-      }
-    });
-
-    // Reset button handler
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      vscode.postMessage({ command: 'reset' });
-    });
-  </script>
-</body>
 </html>
+
+
